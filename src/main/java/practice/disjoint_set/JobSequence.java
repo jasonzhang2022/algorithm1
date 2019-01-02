@@ -19,7 +19,7 @@ public class JobSequence {
 
     public void greedy(Job[] jobs) {
 
-        Arrays.sort(jobs, Comparator.);
+        //Arrays.sort(jobs, Comparator.);
 
     }
 
