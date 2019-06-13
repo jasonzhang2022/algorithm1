@@ -18,9 +18,6 @@ public class Permutation {
     public static void helper(int[] ints, int offset, Consumer<int[]> consumer) {
         if (offset == ints.length){
             consumer.accept(ints);
-            if (Arrays.equals(ints, new int[]{0,2,2,3,1,1})){
-                System.out.println("found");
-            }
             return;
         }
 

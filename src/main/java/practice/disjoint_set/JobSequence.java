@@ -4,9 +4,7 @@ package practice.disjoint_set;
 
 import com.google.common.collect.Ordering;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -58,57 +56,44 @@ public class JobSequence {
     }
 
 
-    public int schedule(Task[] jobs) {
-
-        Comparator<Task> comparator= Ordering.natural().reverse().onResultOf(Task::getPriority);
-        Arrays.sort(jobs, comparator);
-        int len = jobs.length;
-
-        Task[] results = new Task[len];
-
-        /*
-        set[i] points to the set with free node.
-         */
-        int[] set = new int[len];
-        for (int i=0; i<len; i++) {
-            set[i] =i;
+    public int schedule(JobSequence.Task[] jobs) {
+        int n = jobs.length+1;
+        int[] tree = new int[n];
+        for (int i=0; i<n; i++){
+            tree[i] = i;
         }
+        Arrays.sort(jobs, Comparator.comparing(JobSequence.Task::getPriority).reversed());
 
-        for (int i=0; i<len; i++) {
-
-            int targetDealine = Math.min(len, jobs[i].deadline)-1;
-            int freeIndex = find(targetDealine, set);
-            if (freeIndex>=0) {
-                results[freeIndex] = jobs[i];
-                set(freeIndex, set);
+        List<Task> scheduled = new LinkedList<>();
+        for (JobSequence.Task job: jobs){
+            //target set is never to be zero
+            int targetSet = Math.min(job.deadline, n-1);
+            targetSet = findRoot(tree, targetSet);
+            if (targetSet!=0){
+                // not valid set. These job will be scheduled after its dealine.
+                scheduled.add(job);
+                mergetoFront(tree, targetSet);
             }
         }
+        return scheduled.stream().mapToInt(JobSequence.Task::getPriority).sum();
 
-        int priority = 0;
-        for (Task job: results) {
-            if (job!=null) {
-                priority += job.priority;
-            }
-        }
-        return priority;
 
     }
 
-    int find(int u, int[] set){
-        if (u==-1) {
-            return u;
+    int findRoot(int[] tree, int setId){
+
+        int parent = setId;
+        while (parent!=tree[parent]){
+            parent = tree[parent];
         }
-        if (set[u]!=u){
-            set[u] = find(set[u], set);
-        }
-        return set[u];
+        tree[setId]= parent;
+        return parent;
     }
 
-    void set(int freeIndex, int[] set) {
-        int freeIndexFromPreviousSlot = find(freeIndex-1, set);
-        set[freeIndex]=freeIndexFromPreviousSlot;
+    void mergetoFront(int[] tree, int parentId){
+        int frontId = findRoot(tree, parentId-1);
+        tree[parentId]=frontId;
     }
-
 
     public static class Test {
         @org.junit.Test

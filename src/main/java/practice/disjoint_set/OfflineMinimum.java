@@ -32,86 +32,69 @@ import static org.junit.Assert.assertThat;
  */
 public class OfflineMinimum {
 
-
-
-    public int[] extract(String[] input, int n) {
-        // zero is not used
-        int[] disjointSet = new int[n + 1];
-        Arrays.fill(disjointSet, -1);
-
-        //zero is not used.
-        int m = input.length - n;
-        int[] parents = new int[m + 2];
-        int currentSetID = 1;
-        parents[currentSetID] = currentSetID;
-
-
-        for (String one : input) {
-            if (one.equals("E")) {
-                currentSetID++;
-                parents[currentSetID] = currentSetID;
-            } else {
-                int number = Integer.parseInt(one);
-                disjointSet[number] = currentSetID;
+    public int[] extract(String inputs[]) {
+        int n=0;
+        // find out hoe many numbers we have.
+        for (int i=0; i<inputs.length; i++) {
+            if (!inputs[i].equals("E")){
+                n = Math.max(Integer.parseInt(inputs[i]), n);
             }
         }
 
-        //zero is not used.
-        int[] output = new int[m + 2];
-        Arrays.fill(output, -1);
+        // set each number belongs to.
+        int[] set = new int[n+1];
 
-        for (int i = 1; i <= n; i++) {
-            int setID = find(i, disjointSet, parents);
-            if (output[setID] == -1) {
-                output[setID] = i;
-                //we set an output. We effectively merge this set with next set.
-                union(parents, setID);
+        // set starts from zero,
+        int m =0;
+        for (String s: inputs){
+            if (s.equals("E")){
+                m++;
+                continue;
+            }
+            set[Integer.parseInt(s)] = m;
+        }
+        //set relationship
+        // set at m contained remaining elements after extraction.
+        int[] tree = new int[m+1];
+        for (int i=0; i<=m; i++){
+            tree[i]=i;
+        }
+
+        int[] result = new int[m];
+        for (int i =1; i<=n; i++){
+            int setIndex = findRoot(tree, set[i]);
+            if (setIndex!=m){
+                result[setIndex] = i;
+                mergeSetToNextSet(tree, setIndex);
             }
         }
 
-        return Arrays.copyOfRange(output, 1, output.length-1);
-
+        // if result[x]==0, there is no number for set x since 0 is not a valid number for extraction.
+        return Arrays.stream(result).filter(i->i!=0).toArray();
     }
 
-    public int find(int number, int[] disjointSet, int[] parents) {
+    public int findRoot(int[] tree, int i){
+        int parent = i;
 
-        int setID = disjointSet[number];
-        setID = findSetID(setID, parents);
-        disjointSet[number] = setID;
-        return setID;
-    }
-
-
-    public int findSetID(int i, int[] setIDTree) {
-        if (setIDTree[i] != i) {
-            int topparent = findSetID(setIDTree[setIDTree[i]], setIDTree);
-            setIDTree[i] = topparent;
+        while ( tree[parent]!=parent) {
+            parent = tree[parent];
         }
-        return setIDTree[i];
+        tree[i]=parent;
+        return parent;
     }
 
-    //rank is not important. Always merge with right disjoint set
-    public void union(int[] parents, int u) {
-        //don't union last elements.
-        if (u == parents.length - 1) {
-            return;
-        }
-        int uparent = findSetID(u, parents);
-        // out of bound check
-        int uplusParent = findSetID(u + 1, parents);
-        parents[uparent] = uplusParent;
-
+    public void mergeSetToNextSet(int[] tree, int setId) {
+        tree[setId] = findRoot(tree, setId+1);
     }
-
 
     public static class TestCase {
         @Test
         public void testStartWithE(){
             String[] input={"E", "1", "2"};
-            int[] expected={-1};
-            String expectedStr=Arrays.stream(expected).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
-            int[] result=new OfflineMinimum().extract(input, 2);
-            String resultStr=Arrays.stream(result).limit(expected.length).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
+            int[] expected={};
+            String expectedStr=Arrays.stream(expected).mapToObj(Integer::toString).collect(Collectors.joining(","));
+            int[] result=new OfflineMinimum().extract(input);
+            String resultStr=Arrays.stream(result).mapToObj(Integer::toString).collect(Collectors.joining(","));
             assertThat(resultStr, equalTo(expectedStr));
         }
 
@@ -119,19 +102,19 @@ public class OfflineMinimum {
         public void testEndE(){
             String[] input={"1", "2", "E"};
             int[] expected={1};
-            String expectedStr=Arrays.stream(expected).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
-            int[] result=new OfflineMinimum().extract(input, 2);
-            String resultStr=Arrays.stream(result).limit(expected.length).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
+            String expectedStr=Arrays.stream(expected).mapToObj(Integer::toString).collect(Collectors.joining(","));
+            int[] result=new OfflineMinimum().extract(input);
+            String resultStr=Arrays.stream(result).mapToObj(Integer::toString).collect(Collectors.joining(","));
             assertThat(resultStr, equalTo(expectedStr));
         }
 
         @Test
         public void testSomeEmptyExtractionInMiddle(){
             String[] input={"1", "E", "E", "2"};
-            int[] expected={1, -1};
-            String expectedStr=Arrays.stream(expected).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
-            int[] result=new OfflineMinimum().extract(input, 2);
-            String resultStr=Arrays.stream(result).limit(expected.length).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
+            int[] expected={1};
+            String expectedStr=Arrays.stream(expected).mapToObj(Integer::toString).collect(Collectors.joining(","));
+            int[] result=new OfflineMinimum().extract(input);
+            String resultStr=Arrays.stream(result).mapToObj(Integer::toString).collect(Collectors.joining(","));
             assertThat(resultStr, equalTo(expectedStr));
         }
 
@@ -139,9 +122,9 @@ public class OfflineMinimum {
         public void testBasic(){
             String[] input={"4", "8", "E", "3", "E", "9", "2", "6", "E", "E", "E", "1", "7", "E", "5"};
             int[] expected={4, 3,2,6,8,1};
-            String expectedStr=Arrays.stream(expected).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
-            int[] result=new OfflineMinimum().extract(input, 9);
-            String resultStr=Arrays.stream(result).limit(expected.length).mapToObj(a->Integer.toString(a)).collect(Collectors.joining(","));
+            String expectedStr=Arrays.stream(expected).mapToObj(Integer::toString).collect(Collectors.joining(","));
+            int[] result=new OfflineMinimum().extract(input);
+            String resultStr=Arrays.stream(result).mapToObj(Integer::toString).collect(Collectors.joining(","));
             assertThat(resultStr, equalTo(expectedStr));
         }
     }

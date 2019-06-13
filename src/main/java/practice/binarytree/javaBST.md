@@ -22,7 +22,7 @@ Java BinarySearchTree implementation is TreeMap.
   1. left most child in right subtree.
   2. first ancessor who has a left ancestor for this node.
   
- It is NAZI symbol.
+If TreeMap(NavigableMap) is used, NavigableMap provides LowerXXX/HigherXXX, ceilingXXX/floorXXX methods.
  
 ### Predecessor and Successor properties
 + KClosest: Use a global map to keep parent. Easy and clean.

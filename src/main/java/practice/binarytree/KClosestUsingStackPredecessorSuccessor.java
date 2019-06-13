@@ -13,28 +13,36 @@ public class KClosestUsingStackPredecessorSuccessor {
 
     Deque<TreeNodeDouble> closestKValues(TreeNodeDouble node, double value, int k) {
         Stack<TreeNodeDouble> predeccessors = new Stack<>();
-        Stack<TreeNodeDouble> successors= new Stack<>();
+        Stack<TreeNodeDouble> successors = new Stack<>();
 
         findNode(node, value, predeccessors, successors);
 
         Deque<TreeNodeDouble> kitems = new LinkedList<TreeNodeDouble>();
-        if (found!=null) {
+        if (found != null) {
             ((LinkedList<TreeNodeDouble>) kitems).add(found);
+            predeccessors.push(found);
+            successors.push(found);
         }
 
 
         while (kitems.size() < k) {
 
-            TreeNodeDouble predecessor = predeccessors.isEmpty() ? null :predeccessors.peek();
+            TreeNodeDouble predecessor = predeccessors.isEmpty() ? null : predeccessors.peek();
             TreeNodeDouble successor = successors.isEmpty() ? null : successors.peek();
             double leftDisstance = (predecessor == null ? Double.MAX_VALUE : value - predecessor.value);
             double rightDIstance = (successor == null ? Double.MAX_VALUE : successor.value - value);
 
             if (leftDisstance < rightDIstance) {
-                kitems.offerFirst(predecessor);
+                if (predecessor.value != value) {
+                    kitems.offerFirst(predecessor);
+                }
+
                 findPredecessor(predeccessors);
             } else {
-                kitems.offerLast(successor);
+                if (successor.value != value) {
+
+                    kitems.offerLast(successor);
+                }
                 findSuccessor(successors);
             }
         }
@@ -77,7 +85,7 @@ public class KClosestUsingStackPredecessorSuccessor {
         }
     }
 
-    void findSuccessor( Stack<TreeNodeDouble> successors) {
+    void findSuccessor(Stack<TreeNodeDouble> successors) {
         TreeNodeDouble node = successors.pop();
 
         if (node.right != null) {
@@ -135,6 +143,14 @@ public class KClosestUsingStackPredecessorSuccessor {
             KClosestUsingStackPredecessorSuccessor traverser = new KClosestUsingStackPredecessorSuccessor();
 
             assertEquals(traverser.closestKValues(constructTreeNodeDouble(), 59.4, 3).stream().map(i -> String.valueOf(Double.valueOf(i.value).intValue()))
+                    .collect(Collectors.joining(",")), "40,50,60");
+        }
+
+        @org.junit.Test
+        public void testMiddle() {
+            KClosestUsingStackPredecessorSuccessor traverser = new KClosestUsingStackPredecessorSuccessor();
+
+            assertEquals(traverser.closestKValues(constructTreeNodeDouble(), 50, 3).stream().map(i -> String.valueOf(Double.valueOf(i.value).intValue()))
                     .collect(Collectors.joining(",")), "40,50,60");
         }
     }
