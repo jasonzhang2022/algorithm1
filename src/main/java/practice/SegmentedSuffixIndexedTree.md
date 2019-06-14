@@ -65,8 +65,8 @@ For segmented tree, we know leaf nodes contains the value of each element in ori
 Since we have n elements,  the tree height will be Math.ceil(log(n))
 So we have 
   tree depth d= Math.ceil(log(n));
-  nodes at last level: 2^d.
-  nodes above last level: 2^d-1;
+  number of nodes at last level: 2^d.
+  number of nodes above last level: 2^d-1;
   
 We don't use tree[0] since 2*0=0. It has issue with its children node.
 

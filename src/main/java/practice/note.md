@@ -1,10 +1,45 @@
-sortedmap
-NavigavleMap
-LinkedHashMap
+# Java Collections
++ map: putIfAbsent, getOrDefault, computIfAbsent, ComputeIfPresent, compute, merge
++ sortedmap: firtKey, lastKey, subMap, headMap, tailMap, keySet
++ NavigavleMap: subMap, headMap, tailMap, descdendingKetSet, descendingMap, ceilingKey/floorKey, higherKey/lowerKey
++ LinkedHashMap
 
 need think about test case
-Stream: filter, map, limit, skip
-    allMatch, anyMatch, noneMatch, count
-    sorted
-    toArray, findFirst, findAny
-    empty, concat, peek, of
+#Java Stream
++ filter, map, limit, skip, distinct
++    allMatch, anyMatch, noneMatch, count
++    sorted
++   toArray, findFirst, findAny, collect
++    empty, concat, peek, of
+
+# BIT
++ tree[max_element+1]: tree[0] is not used so we need one element than underlying array
++ lastbit = n&-n;
++ stop traverse down when idx reach zero.
++ stop traverse up when idx is out of boundary.
+
+#SegmentedTree
++ the parent node is i/2;
++ the left child node is 2*i
++ the right child node is 2*i+1
++ We don't use tree[0] since 2*0=0. This will map left child to node itself.
+
+# BinarySearch 
+Arrays.binarySearch or Collections.binarySearch
+Use them clever to avoid to implement binarySearch by myself.
+**end-start >1** for Binart Search
+
+# QuickSelect, Partial ordering
++ choose end item as pivotal value during interview. Easy programming
++ in Each partition loop, 
+  + the end condition is end<start.
+  + Basically we are move Start forward, however, start may never move if all
+    values in segment >= pivotal value. 
+    In this case we have infinite loop. We need to fall back to linear approach.
++ Partition reaches base case when end<=start, In this case, we need to check elements 
+  at start to make final decision where to split.
+  
+
+
+
+   

@@ -2,6 +2,8 @@ package practice;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -13,6 +15,10 @@ public class QuickSelect_FractionalKnapsack {
         int profit;
         int weight;
         double ratio;
+
+        double getRatio(){
+            return ratio;
+        }
         public Item(int profit, int weight) {
             super();
             this.profit = profit;
@@ -21,77 +27,83 @@ public class QuickSelect_FractionalKnapsack {
         }
     }
 
-
-
-    public static double maximumProfit(Item[] items, int capacity){
-
-        int divideIndex = partition(items, 0, items.length-1, capacity);
-        double profit =0;
-        int weightSoFar=0;
-        for (int i=0; i<divideIndex; i++) {
-            profit+=items[i].profit;
-            weightSoFar += items[i].weight;
-        }
-        if (capacity - weightSoFar >= items[divideIndex].weight){
-            return profit + items[divideIndex].profit;
-        } else {
-            double remaingProfit = items[divideIndex].ratio * (capacity-weightSoFar) / items[divideIndex].weight;
-            return profit + remaingProfit;
-        }
+    public static double maximumProfit(QuickSelect_FractionalKnapsack.Item[] items, int capacity){
+        partition(items, capacity, 0, items.length -1);
+        double p = profit;
+        profit = 0;
+        return p;
     }
 
-    public static int partition(Item[] items, int start, int end, int desiredWeight) {
-        if (start==end) {
-            return start;
-        }
-        int pivotalIndex = start + new Random().nextInt(end-start);
-        Item pivotalItem = items[pivotalIndex];
-
-        Item temp = items[end];
-        items[end]=pivotalItem;
-        items[pivotalIndex] = temp;
-
-        int m=start;
-        int n=end-1;
-        while (m<n) {
-            if (items[m].ratio >pivotalItem.ratio){
-                m++;
+    static double profit = 0;
+    public static void partition(QuickSelect_FractionalKnapsack.Item[] items, int capacity, int start, int end){
+        if (end<=start){
+            if (capacity > items[start].weight){
+                profit = items[start].profit;
             } else {
-                temp = items[n];
-                items[n] = items[m];
-                items[m] = temp;
-                n--;
+                profit += capacity/Integer.valueOf(items[start].weight).doubleValue()*Integer.valueOf(items[start].profit).doubleValue();
+            }
+            return;
+        }
+
+        int s =start;
+        int e = end;
+        int leftCapacity = 0;
+        int leftProfit = 0;
+        QuickSelect_FractionalKnapsack.Item pivotal = items[e];
+        e--;
+        while (e>=s){
+            if (items[s].ratio<= pivotal.ratio) {
+                QuickSelect_FractionalKnapsack.Item temp = items[s];
+                items[s]=items[e];
+                items[e] = temp;
+                e--;
+            } else {
+                leftCapacity += items[s].weight;
+                leftProfit += items[s].profit;
+                s++;
+
             }
         }
 
-        //m == n right now.
-        if (items[m].ratio <=pivotalItem.ratio){
-            m--;
+        if (leftCapacity==capacity ){
+            profit+=leftProfit;
+            return;
         }
-        //every element in this segments is  <= pivotal elements
+        if (leftCapacity <capacity){
+            profit+=leftProfit;
+            // s can be start. This will form infinite loop.
+            // inifite loop case: all ratio is equal.
+            //we can sort and
+            if (s==start) {
+                linear(items, capacity-leftCapacity, s, end);
+            } else {
+                partition(items, capacity - leftCapacity, s, end);
+            }
+        } else {
 
-        if (m<start) {
-            m=start;
-            items[end] = items[start];
-            items[start] = pivotalItem;
+            // this definitely reduce the segment
+            partition(items, capacity, start, s-1);
         }
-
-        int leftWeight = 0;
-        for (int i =start; i<=m; i++){
-            leftWeight += items[i].weight;
-        }
-        if (leftWeight == desiredWeight) {
-            return m;
-        }
-
-        if (leftWeight>desiredWeight) {
-            return partition(items, start, m, desiredWeight);
-        }
-
-        return partition(items, m+1, end, desiredWeight-leftWeight);
     }
 
 
+    public static void linear(QuickSelect_FractionalKnapsack.Item[] items, int capacity, int start, int end){
+        QuickSelect_FractionalKnapsack.Item[] sections = Arrays.copyOfRange(items, start, end+1);
+        Arrays.sort(sections, Comparator.comparing(QuickSelect_FractionalKnapsack.Item::getRatio).reversed());
+
+        int leftCapacity =0;
+        for (QuickSelect_FractionalKnapsack.Item item: sections){
+            if (leftCapacity+item.weight < capacity) {
+                profit+=item.profit;
+                leftCapacity+=item.weight;
+            } else {
+                profit += Integer.valueOf((capacity-leftCapacity)).doubleValue() * Integer.valueOf(item.profit).doubleValue()
+                        /Integer.valueOf(item.weight).doubleValue();
+                break;
+            }
+        }
+
+    }
     public static class Test {
 
         @org.junit.Test
@@ -126,7 +138,22 @@ public class QuickSelect_FractionalKnapsack {
             double profit1=maximumProfit(items, targetWeight);
             assertEquals(String.format("%.2f", profit1), "9.00");
             profit1=maximumProfit(items, 6);
-            assertEquals(String.format("%.2f", profit1), "9.13");
+            assertEquals(String.format("%.2f", profit1), "9.50");
+        }
+
+        @org.junit.Test
+        public void testAllEqual(){
+            Item[] items=new Item[4];
+            items[0]=new Item(3,3); //ratio 1
+            items[1]=new Item(3,3); //ratio 0.5
+            items[2]=new Item(3,3); //ratio 2
+            items[3]=new Item(3,3); //ratio 2
+
+
+            double profit1=maximumProfit(items, 5);
+            assertEquals(String.format("%.2f", profit1), "5.00");
+            profit1=maximumProfit(items, 6);
+            assertEquals(String.format("%.2f", profit1), "6.00");
         }
     }
 }
