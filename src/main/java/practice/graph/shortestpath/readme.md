@@ -60,7 +60,7 @@ https://www.geeksforgeeks.org/johnsons-algorithm/
 1. added a new vertex s. add weight (s, v)=1 for v belongs V.
 2. run Bellman-Ford algorithm from s to v. The shortest weight for each v is the weight of vertext h[v]
    1. if there is negative cycle, stop.
-3. transform the W(u, v) to W(u,v)+h[u]-h[v].
+3. transform the W(u, v) to W'(u,v)=h[u]+w(u,v)-h[v] .
    1. if shortest path from s to v passes (u, v), h[v] = h[u]+w(u, v)
    2. if shortest path from s to v doesn't pass (u,v), h[v] <h[u]+w(u,v)
    3. so h[v]<=h[u]+w(u,v),  -> w'(u,v) = h[u]+w(u,v)-h[v] >=0

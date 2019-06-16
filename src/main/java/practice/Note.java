@@ -29,7 +29,8 @@ public class Note {
     }
 
     public static void main(String args[]){
-        testFindStartIndex();
+        grid();
+
     }
 
     public static void testFindStartIndex(){
@@ -58,5 +59,12 @@ public class Note {
             return start;
         }
         return end;
+    }
+
+
+    public static void grid() {
+        //multiple-dimension array is auto initialized
+        int[][] grid = new int[5][5];
+        System.out.println(grid[3][3]);
     }
 }

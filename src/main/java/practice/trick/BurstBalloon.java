@@ -2,6 +2,8 @@ package practice.trick;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -36,17 +38,29 @@ public class BurstBalloon {
     long[][] cache;
     int n;
     public long maxCoinsCachedDp(int[] nums){
-        n = nums.length;
+        n = nums.length+2;
+        int[] newnums = new int[n];
+        newnums[0]=1;
+        newnums[n-1]=1;
+        for (int i=1; i<n-1; i++){
+            newnums[i]=nums[i-1];
+        }
+
         cache = new long[n][n];
-        helper(nums, 0, n-1);
-        return cache[0][n-1]+nums[0]*nums[n-1]+Math.max(nums[0], nums[n-1]);
+        for (int r=0; r<n; r++){
+            Arrays.fill(cache[r], Long.MIN_VALUE);
+        }
+        helper(newnums, 0, n-1);
+        return cache[0][n-1];
     }
 
     /**
-     * The maximal coin earned for segments from i to j.
+     * The maximal coin earned for segments from i to j when ending with i and j.
+     *
+     * We only burst middle element, not boundary elements.
      */
     public long helper(int[] num, int i, int j) {
-        if (cache[i][j]!=0){
+        if (cache[i][j]!=Long.MIN_VALUE){
             return cache[i][j];
         }
         if (j==i+1){
@@ -54,8 +68,8 @@ public class BurstBalloon {
         }
 
         long max = Long.MIN_VALUE;
-        for (int lastBalloonIndex = i+1; lastBalloonIndex<j; lastBalloonIndex++){
-            long temp = helper(num, i, lastBalloonIndex) + helper(num, lastBalloonIndex, j)+num[i]*num[j]*num[lastBalloonIndex];
+        for (int last = i+1; last<j; last++){
+            long temp = helper(num, i, last) + helper(num, last, j)+num[i]*num[j]*num[last];
             max= Math.max(max, temp);
         }
         cache[i][j]= max;

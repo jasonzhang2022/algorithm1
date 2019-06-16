@@ -2,7 +2,7 @@
 
 what is SCC? 
 For **directed** graph, there is a path from any vertex to another vertex. SCC must has at least one cycle. Given 
-two vertices: A, B. There is one path from A to B: A->B, there is also one path from B->B. This is from definition.
+two vertices: A, B. There is one path from A to B: A->B, there is also one path from B->A. This is from definition.
 A->B->A. So we have one cycle.
 
 ## Algorithm

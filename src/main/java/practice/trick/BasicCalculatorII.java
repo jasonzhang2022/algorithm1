@@ -25,85 +25,86 @@ Some examples:
 
  */
 public class BasicCalculatorII {
+    int i = 0;
 
-    Deque<Integer> nums = new LinkedList<>();
-    Deque<Character> ops  = new LinkedList<>();
     public int calculate(String s) {
-        Iterator<Character> str =s.chars().mapToObj(c->(char)c).collect(Collectors.toList()).iterator();
-        help(str);
-        return nums.pollFirst();
+        s = s + "+";
+        return calculatePlusMinusSegment(s);
     }
 
-    public void help(Iterator<Character> str) {
-        int num =0;
-        while (str.hasNext()) {
+    public int calculatePlusMinusSegment(String s) {
 
-            char c= str.next();
-            if (c== ' ' ) {
+        char preOp = '+';
+        int num = 0;
+        int sum = 0;
+        while (i < s.length()) {
+            char c = s.charAt(i);
+            if (c == ' ') {
+                i++;
                 continue;
-            } else if(Character.isDigit(c)){
-                num=num*10+ (c-'0');
-            } else if ( c == '+' || c=='-'){
-                nums.offerLast(num);
+            } else if (c == '+' || c == '-') {
+                sum = preOp == '+' ? sum + num : sum - num;
+                preOp = c;
                 num = 0;
-               calulateNumer();
-               ops.offerLast(c);
-            } else if (c== '*' || c == '/') {
-                nums.offerLast(num);
-                num=0;
-                ops.offerLast(c);
+            } else if (c == '*' || c == '/') {
+                num = calculateMulicationSegment(s, num);
+                i--;
+            } else if (c >= '0' && c <= '9') {
+                num = num * 10 + c - '0';
             }
+            i++;
         }
-        nums.offerLast(num);
-        calulateNumer();
+        return sum;
     }
 
-    public void calulateNumer(){
-        if (ops.isEmpty()){
-            return;
-        }
-        int prefix = 0;
-        char prefixOp='+';
-        if (ops.peekFirst() == '+' || ops.peekFirst()=='-'){
-            prefix = nums.pollFirst();
-            prefixOp = ops.pollFirst();
-        }
-
-        int result = nums.pollFirst();
-        while (!ops.isEmpty()){
-            char c = ops.pollFirst();
-            if (c=='*'){
-                result*=nums.pollFirst();
-            } else {
-                result/=nums.pollFirst();
+    public int calculateMulicationSegment(String s, int preNum) {
+        int num = 0;
+        int sum = preNum;
+        char preOp = s.charAt(i);
+        i++;
+        while (i < s.length()) {
+            char c = s.charAt(i);
+            if (c == ' ') {
+                i++;
+                continue;
+            } else if (c == '*' || c == '/') {
+                sum = preOp == '*' ? sum * num : sum / num;
+                preOp = c;
+                num = 0;
+            } else if (c == '+' || c == '-') {
+                sum = preOp == '*' ? sum * num : sum / num;
+                return sum;
+            } else if (c >= '0' && c <= '9') {
+                num = num * 10 + c - '0';
             }
+            i++;
         }
-        if (prefixOp == '+'){
-            result = prefix + result;
-        } else {
-            result = prefix - result;
-        }
-        nums.offerLast(result);
+        return sum;
     }
 
-    public static class TestCase{
+    public static class TestCase {
 
         @Test
-        public void test(){
-            BasicCalculatorII calculator=new BasicCalculatorII();
+        public void test() {
+            BasicCalculatorII calculator = new BasicCalculatorII();
             assertEquals(7, calculator.calculate("3+2*2"));
+            calculator.i = 0;
             assertEquals(1, calculator.calculate("3+2*2-6"));
+            calculator.i = 0;
             assertEquals(43, calculator.calculate("32+4*3*8/6-5"));
+            calculator.i = 0;
             assertEquals(5, calculator.calculate("3-5+7"));
         }
+
         @Test
-        public void test1(){
-            BasicCalculatorII calculator=new BasicCalculatorII();
+        public void test1() {
+            BasicCalculatorII calculator = new BasicCalculatorII();
             assertEquals(1, calculator.calculate("3/2"));
         }
+
         @Test
-        public void test2(){
-            BasicCalculatorII calculator=new BasicCalculatorII();
+        public void test2() {
+            BasicCalculatorII calculator = new BasicCalculatorII();
             assertEquals(5, calculator.calculate("3 +5 /2"));
         }
     }
