@@ -136,12 +136,14 @@ public class RemoveDuplicateLetter {
             assertEquals("bda", removeDisjoint("bdba"));
             assertEquals("abc", removeDisjoint("baabc"));
             assertEquals("acdb", removeDisjoint("cbacdcbc"));
+            assertEquals("acd", removeDisjoint("acadc"));
         }
         @org.junit.Test
         public void test2(){
             assertEquals("bda", removeStack("bdba"));
             assertEquals("abc", removeStack("baabc"));
             assertEquals("acdb", removeStack("cbacdcbc"));
+            assertEquals("acd", removeStack("acadc"));
         }
     }
 }

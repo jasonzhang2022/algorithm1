@@ -28,11 +28,6 @@ public class Note {
         System.out.printf("Found position %d, %d %d\n", start, end, end-start);
     }
 
-    public static void main(String args[]){
-        grid();
-
-    }
-
     public static void testFindStartIndex(){
         int[] nums = {1,1,2,2,3,3,4,4,5,5,5,6,6,6};
         int start2=findStartIndex(2, nums);
@@ -61,10 +56,22 @@ public class Note {
         return end;
     }
 
+    enum Direction {
+        up, right, down, left;
+    }
+
+    public static void enumTest(){
+        System.out.printf(" up should have an ordinal 0 : %d\n", Direction.up.ordinal());
+        System.out.printf(" up should have a name up: %s\n", Direction.values()[Direction.up.ordinal()].name());
+    }
 
     public static void grid() {
         //multiple-dimension array is auto initialized
         int[][] grid = new int[5][5];
         System.out.println(grid[3][3]);
+    }
+
+    public static void main(String args[]){
+        enumTest();
     }
 }

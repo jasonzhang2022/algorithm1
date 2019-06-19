@@ -3,7 +3,7 @@
 + sortedmap: firtKey, lastKey, subMap, headMap, tailMap, keySet
 + NavigavleMap: subMap, headMap, tailMap, descdendingKetSet, descendingMap, ceilingKey/floorKey, higherKey/lowerKey
 + LinkedHashMap
-+ Arrays.binarySearch(), Collections.binarySearch
++ Arrays.binarySearch(), Collections.binarySearch, toIndex exclusively
 + Arrays.copyOfRange(), list.subList()
 + Arrays.sort(), Colections.sort() are in-place sorting
 
@@ -57,8 +57,33 @@ Use them clever to avoid to implement binarySearch by myself.
 + Topological sorting
 + Euler tour
 
-  
+## formularize graph problem
+https://www.geeksforgeeks.org/given-array-strings-find-strings-can-chained-form-circle/
+nested box
+
+## pigeon counting
+topk
+hindex
+
+## global minimal
+burst ballon
+offline minimum extraction
+job sequence deadline
 
 
+#Performance
++ O(NlogN): sorting
++ logN: binary search
++ N: partial sorting, quick select. Pigeon hole sorting. Count sorting.
+
+
+#Flow
+## Design:
+ DB schema, COmponent, API, Tech stack, Scalability, Security(Auth, Access Control), Monitor, Audting,
+
+## Code
+  Test case
+  check input, Check Exception
+   
 
    
