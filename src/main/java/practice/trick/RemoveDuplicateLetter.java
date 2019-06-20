@@ -40,6 +40,9 @@ public class RemoveDuplicateLetter {
             count[c-'a']++;
         }
         for (char c: s.toCharArray()){
+            if (instack[c-'a']){
+                continue;
+            }
             while (!stack.isEmpty()) {
                 char topc = stack.peek();
                 if (count[topc-'a']>0 && topc>=c){
@@ -49,12 +52,9 @@ public class RemoveDuplicateLetter {
                     break;
                 }
             }
-            if (!instack[c-'a']) {
-                stack.push(c);
-                count[c-'a']--;
-                instack[c-'a']=true;
-            }
-
+            stack.push(c);
+            count[c-'a']--;
+            instack[c-'a']=true;
         }
         StringBuilder sb = new StringBuilder();
         while(!stack.isEmpty()){
