@@ -32,7 +32,8 @@
     
 1. Duplicated number:
 
-   **TODO**: Slow and fast Pointer solution. Not a good approach. Very confusing about the index and node value.
+   Slow-Fast pointer solution. Once both slow find the same index, both slow will become synchronized.
+   memorize the algorithm.
    
 1. IsValidPreorderSerialization
 

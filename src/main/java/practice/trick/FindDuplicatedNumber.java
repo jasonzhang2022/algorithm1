@@ -59,6 +59,27 @@ public class FindDuplicatedNumber {
         return numbers[n];
     }
 
+    static int fastSlow(int[] numbers){
+
+        int head = 0;
+        int slow = numbers[head];
+        int fast = numbers[slow];
+
+        while (slow!=fast){
+            slow = numbers[slow];
+            fast = numbers[fast];
+            fast = numbers[fast];
+        }
+
+        int slow1 = head;
+        while (slow1!=slow){
+            slow1=numbers[slow1];
+            slow = numbers[slow];
+        }
+
+      return slow;
+    }
+
     public static final class TestCase {
         @Test
         public void test() {
@@ -68,6 +89,22 @@ public class FindDuplicatedNumber {
             int[] input = ints.stream().mapToInt(Integer::intValue).toArray();
             assertEquals(xor(input), 20);
             assertEquals(sort(input), 20);
+        }
+
+        @Test
+        public void testSlowFast() {
+            int n= 200;
+            List<Integer> ints= IntStream.concat(IntStream.range(1, n+1), IntStream.of(20)).boxed().collect(Collectors.toList());
+            for (int i=0; i<100; i++ ){
+                Collections.shuffle(ints);
+                int[] input = ints.stream().mapToInt(Integer::intValue).toArray();
+                assertEquals(fastSlow(input), 20);
+            }
+        }
+
+        @Test
+        public void testSlowFast1() {
+            assertEquals(fastSlow(new int[]{5,1,4,5,2,3}), 5);
         }
     }
 }
